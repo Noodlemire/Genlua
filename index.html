@@ -1,0 +1,289 @@
+<!--
+Genlua: TF2 Weapon Generator
+Copyright (C) 2021 Noodlemire
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+
+<!DOCTYPE html>
+<html>
+
+<script src="fengari-web.js" type="text/javascript"></script>
+
+<script src="/gen.lua" type="application/lua" async></script>
+
+<script>
+	function generate()
+	{
+		var selClass = document.getElementById("classes").value;
+		var selSlot = document.getElementById("slots").value;
+		var selGoal = document.getElementById("goal").value;
+		var selInt = document.getElementById("intensity").value;
+		var selTol = document.getElementById("tolerance").value;
+
+		if(!selGoal) {
+			selGoal = 0;
+			document.getElementById("goal").value = selGoal;
+		}
+		if(!selInt || selInt < 1) {
+			selInt = 8;
+			document.getElementById("intensity").value = selInt;
+		}
+		if(!selTol || selTol < 0) {
+			selTol = 10;
+			document.getElementById("tolerance").value = selTol;
+		}
+
+		fengari.load(
+			'core.settings.class = \"' + selClass + '\" ' +
+			'core.settings.slot = \"' + selSlot + '\" ' +
+			'core.settings.goal = ' + selGoal + ' ' +
+			'core.settings.intensity = ' + selInt + ' ' +
+			'core.settings.tolerance = ' + selTol + ' ' +
+			'core.generate()')();
+	}
+
+	function help()
+	{
+		if(document.getElementById("imgHelp").name == "btnHelp")
+		{
+			document.getElementById("imgHelp").src = "assets/BtnClose.png";
+			document.getElementById("imgHelp").name = "btnClose";
+			document.getElementById("helpBox").innerHTML = "<p class=\"neutral\">This generator uses \"stat points\" to track an estimate of the "
+					+ "weapon's total power.</p>"
+					+ "<p class=\"neutral\">Note that most stats tend to have their worth be between -50 and 50 points.</p>"
+					+ "<p class=\"neutral\"><br></p>"
+					+ "<p class=\"neutral\">Goal: The total stat point value that the generator will attempt to reach. You can adjust it to change "
+					+ "the balance in power between upsides and downsides.</p>"
+					+ "<p class=\"neutral\"><br></p>"
+					+ "<p class=\"neutral\">Intensity: This influences the minimum level of both positive and negative stats that must be generated. "
+					+ "On average, 1 point of intensity is equal to 10 stat points. The actual intensity value varies by ±15% and is displayed as "
+					+ "the weapon's level.</p>"
+					+ "<p class=\"neutral\"><br></p>"
+					+ "<p class=\"neutral\">Tolerance: How far from the goal the weapon's stat point level can be, and still be considered acceptable.</p>"
+					+ "<p class=\"neutral\"><br></p>"
+					+ "<p class=\"neutral\">Source Code: https://github.com/Noodlemire/Genlua</p>";
+
+			document.getElementById("helpBox").id = "helpBoxVisible";
+		}
+		else
+		{
+			document.getElementById("imgHelp").src = "assets/BtnHelp.png";
+			document.getElementById("imgHelp").name = "btnHelp";
+			document.getElementById("helpBoxVisible").innerHTML = null;
+			document.getElementById("helpBoxVisible").id = "helpBox";
+		}
+	}
+</script>
+
+<head>
+	<title>Genlua: TF2 Weapon Generator</title>
+	<link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon"/>
+	<style>
+		@font-face { font-family: TFont2; src: url('assets/TF2secondary.ttf'); }
+
+		:root {
+			--backColor: rgb(60, 54, 47);
+            --titleColor: rgb(255, 215, 0);
+            --subtitleColor: rgb(117, 107, 94);
+            --basicColor: rgb(222, 226, 196);
+            --goodColor: rgb(127, 198, 205);
+            --badColor: rgb(255, 64, 62);
+        }
+
+		#statbox {
+			border: 20px solid transparent;
+			padding: 5px;
+			border-image: url('assets/DescBG.png') 20 stretch;
+		}
+
+		#helpBoxVisible {
+			border: 20px solid transparent;
+			padding: 5px;
+			border-image: url('assets/DescBG.png') 20 stretch;
+		}
+
+		.title {
+			text-align: center;
+			font-family: TFont2;
+			color: var(--titleColor);
+		}
+
+		.subtitle {
+			text-align: center;
+			font-family: TFont2;
+			color: var(--subtitleColor);
+		}
+
+		.body {
+			position: absolute;
+			left: 70%;
+			top: 200px;
+			margin-left: -200px;
+			width: 400px;
+			text-align: center;
+		}
+
+		.helpBody {
+			position: absolute;
+			left: 225px;
+			top: 500px;
+			margin-left: -200px;
+			width: 400px;
+			text-align: center;
+		}
+
+		.neutral {
+			text-align: center;
+			font-family: TFont2;
+			color: var(--basicColor);
+			margin: 2px;
+			padding: 0px;
+		}
+
+		.positive {
+			text-align: center;
+			font-family: TFont2;
+			color: var(--goodColor);
+			margin: 2px;
+			padding: 0px;
+		}
+
+		.negative {
+			text-align: center;
+			font-family: TFont2;
+			color: var(--badColor);
+			margin: 2px;
+			padding: 0px;
+		}
+
+		.button {
+			text-align: center;
+			font-family: TFont2;
+			color: var(--titleColor);
+			background-color: var(--backColor);
+			position: absolute;
+			top: 400px;
+			left: 15%;
+			width: 200px;
+			height: 50px;
+			font-size: 40px;
+			border: transparent;
+		}
+
+		.helpButton {
+			position: absolute;
+			border: transparent;
+			background-color: transparent;
+			top: 380px;
+			left: 6%;
+			width: 64px;
+			height: 64px;
+		}
+
+		.label {
+			font-family: TFont2;
+			color: var(--basicColor);
+			position: absolute;
+			top: 230px;
+			left: 5%;
+			width: 1px;
+			font-size: 25px;
+			line-height:25px;
+		}
+
+		.options {
+			position: absolute;
+			top: 220px;
+			left: 20%;
+			width: 1px;
+			font-size: 25px;
+			line-height:25px;
+		}
+
+		.optionsVisual {
+			font-family: TFont2;
+			color: var(--basicColor);
+			background-color: var(--backColor);
+			font-size: 25px;
+			border: transparent;
+			line-height:25px;
+		}
+	</style>
+</head>
+
+<body style="background-color:#2a2725">
+	<h1 class="title">GENLUA: TF2 WEAPON GENERATOR</h1>
+
+	<h2 class="subtitle">By Noodlemire</h2>
+
+	<div id="statbox"; class="body">
+		<img src="assets/Icon.png"; id="weaponImg"/>
+
+		<h3 class="title"; id="weaponTitle">A NEW WEAPON FOR THE GAME?</h3>
+		<p class="subtitle"; id="weaponSubtitle">Level ? Weapon</p>
+		<div id="weaponStats">
+			<p class="positive">+How good will it be?</p>
+			<p class="negative">-What could possibly go wrong?</p>
+			<p class="neutral">Find out by clicking the "GENERATE" button!</p>
+		</div>
+	</div>
+
+	<div class="label">
+		<label for="classes">Class:</label>
+		<label for="slots">Slot:</label>
+		<label for="goal">Goal:</label>
+		<label for="goal">Intensity:</label>
+		<label for="goal">Tolerance:</label>
+	</div>
+
+	<div class="options">
+		<select class="optionsVisual"; name="classes" id="classes">
+			<option value="any">Any</option>
+			<option value="scout">Scout</option>
+			<option value="soldier">Soldier</option>
+			<option value="pyro">Pyro</option>
+			<option value="demo">Demo</option>
+			<option value="heavy">Heavy</option>
+			<option value="engineer">Engineer</option>
+			<option value="medic">Medic</option>
+			<option value="sniper">Sniper</option>
+			<option value="spy">Spy</option>
+		</select>
+
+		<select class="optionsVisual"; name="slots" id="slots">
+			<option value="any">Any</option>
+			<option value="primary">Primary</option>
+			<option value="secondary">Secondary</option>
+			<option value="melee">Melee</option>
+			<option value="primary_PDA">Primary PDA</option>
+			<option value="secondary_PDA">Secondary PDA</option>
+			<option value="building">Sapper</option>
+		</select>
+
+		<input class="optionsVisual"; type="number"; id="goal"; name="goal"; value="0">
+		<input class="optionsVisual"; type="number"; id="intensity"; name="intensity"; value="8"; min="1">
+		<input class="optionsVisual"; type="number"; id="tolerance"; name="tolerance"; value="10"; min="0">
+	</div>
+
+	<input class="button"; onclick="generate()"; type="button"; value="GENERATE"; id="btnGen"/>
+
+	<img class="helpButton"; id="imgHelp"; name="btnHelp"; src="assets/BtnHelp.png"/>
+	<input class="helpButton"; onclick="help()"; type="button"; value=""; id="btnHelp"/>
+
+	<div class="helpBody"; id="helpBox"></div>
+</body>
+
+</html>
