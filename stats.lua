@@ -2578,7 +2578,7 @@ core.stats.registerStat("shot_behavior", 50, "+All players connected via Medigun
 	end
 )
 
-core.stats.registerStat("shot_behavior", -40, "Projectiles shatter harmlessly upon hitting terrain",
+core.stats.registerStat("shot_behavior", -40, "-Projectiles shatter harmlessly upon hitting terrain",
 	function(weapon)
 		return weapon.flags.damage and weapon.flags.splash and not weapon.flags.bounce and weapon.name ~= "stickybomb_launcher"
 	end,
