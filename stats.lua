@@ -1893,7 +1893,7 @@ end)
 
 core.stats.registerStat("reload", {-50, 50},
 	function(stat, weapon)
-		return "+On hit: 1 ammo is instantly "..(stat.val > 0 and "reloaded into" or "unloaded from").." the clip"
+		return (stat.val > 0 and "+" or "-").."On hit: 1 ammo is instantly "..(stat.val > 0 and "reloaded into" or "unloaded from").." the clip"
 	end,
 	function(weapon)
 		return weapon.flags.clip and weapon.name ~= "stickybomb_launcher"
@@ -1902,7 +1902,7 @@ core.stats.registerStat("reload", {-50, 50},
 
 core.stats.registerStat("reload", {-50, 50},
 	function(stat, weapon)
-		return "+On miss: 1 ammo is instantly "..(stat.val > 0 and "reloaded into" or "unloaded from").." the clip"
+		return (stat.val > 0 and "+" or "-").."+On miss: 1 ammo is instantly "..(stat.val > 0 and "reloaded into" or "unloaded from").." the clip"
 	end,
 	function(weapon)
 		return weapon.flags.clip and weapon.name ~= "stickybomb_launcher"
