@@ -7,7 +7,7 @@ About
 -------------------------------------------------------------------------------------------------------------
 This is a Lua-based random weapon generator for Team Fortress 2. This generator is distinct in that it knows many basic facts about different weapon types and stats, and uses them to decide how much each stat should be worth. With this, it aims to possibly be as balanced as a random weapon generator can be.
 
-This generator can either be ran as a stand-alone Lua program, or as a website. The official website can be found at: 
+This generator can either be ran as a stand-alone Lua program, or as a website. The official website can be found at: https://noodlemire.github.io/Genlua/
 
 Extra Features:
  * Weapons that can belong to an arbitrary selection of classes
