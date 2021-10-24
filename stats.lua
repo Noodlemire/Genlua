@@ -2072,14 +2072,14 @@ core.stats.registerStat("resistance", {min = -40, max = 40},
 
 core.stats.registerStat("resistance", -50,
 	function(stat, weapon)
-		if weapon.flags.recharge then
+		if weapon.flags.recharge and not weapon.flags.projectile then
 			return "-You are Marked For Death while the effect is active, and for a short period after it ends"
 		else
 			return "-You are Marked For Death while deployed, and for a short period after switching weapons"
 		end
 	end,
 	function(weapon)
-		return (weapon.flags.recharge and not weapon.flags.projectile) or not weapon.flags.never_deployed
+		return weapon.flags.recharge or not weapon.flags.never_deployed
 	end,
 	function(stat, weapon)
 		if (weapon.slots.primary_PDA or weapon.slots.secondary_PDA or weapon.slots.building) and not weapon.flags.never_deployed then
