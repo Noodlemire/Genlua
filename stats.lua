@@ -2124,7 +2124,7 @@ core.stats.registerStat("self_heal", {min = -150, max = 30},
 		if stat.val > 0 then
 			stat.val = math.ceil(stat.val)
 		else
-			stat.val = math.floor(stat.val / 15)
+			stat.val = math.floor(stat.val / 3)
 		end
 
 		if weapon.flags.never_deployed then
