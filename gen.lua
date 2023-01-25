@@ -19,6 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 
+math.randomseed(os.time())
+core = {}
+local args = {...}
 local js = nil
 
 xpcall(function() js = require("js") end, function() end)
@@ -31,22 +34,15 @@ else
 	print("HTML is not in use")
 end
 
-
-
-math.randomseed(os.time())
-
-core = {}
-
-dofile("./utils.lua")
-
 core.settings = {
-	goal = 0,
-	intensity = 8,
-	tolerance = 10,
-	class = "any",
-	slot = "any"
+	class = args[1] or "any",
+	slot = args[2] or "any",
+	goal = tonumber(args[3]) or 0,
+	intensity = tonumber(args[4]) or 8,
+	tolerance = tonumber(args[5]) or 10
 }
 
+dofile("./utils.lua")
 dofile("./notes.lua")
 dofile("./special_stats.lua")
 dofile("./weapon.lua")

@@ -345,14 +345,9 @@ end
 
 
 
-core.stats.registerCategory("airblast", 80)
-core.stats.registerCategory("ammo", 90)
-
 core.stats.registerCategory("building", 100, function(stat, weapon)
 	core.notes.put("engineerBuildings")
 end)
-
-core.stats.registerCategory("bullets_per_shot", 75)
 
 core.stats.registerCategory("charge_build", 50, function(stat, weapon)
 	stat.weight = stat.weight / 3
@@ -360,6 +355,9 @@ core.stats.registerCategory("charge_build", 50, function(stat, weapon)
 	weapon.flags.required_category = "charge_result"
 end)
 
+core.stats.registerCategory("airblast", 80)
+core.stats.registerCategory("ammo", 70)
+core.stats.registerCategory("bullets_per_shot", 75)
 core.stats.registerCategory("charge_rate", 50)
 core.stats.registerCategory("charge_result", 0)
 core.stats.registerCategory("cloak", 100)
@@ -476,7 +474,7 @@ core.stats.registerStat("ammo", {-36, 36},
 	end
 )
 
-core.stats.registerStat("ammo", {min = -75, max = 75},
+core.stats.registerStat("ammo", {min = -50, max = 50},
 	function(stat, weapon)
 		return (stat.val > 0 and "+" or "")..stat.val.."% max reserve ammo on all of wearer's weapons"
 	end,
@@ -484,8 +482,8 @@ core.stats.registerStat("ammo", {min = -75, max = 75},
 		return (weapon.flags.reserve or (not weapon.slots.primary and not weapon.slots.secondary)) and not weapon.classes.spy and not weapon.classes.medic
 	end,
 	function(stat, weapon)
-		if stat.val > 0 then
-			stat.val = stat.val * 2
+		if stat.val < 0 then
+			stat.val = stat.val / 2
 		end
 
 		stat.val = core.utils.round(stat.val, 5)
@@ -501,7 +499,7 @@ core.stats.registerStat("ammo", {min = -50, max = 50},
 		return (weapon.flags.reserve or not weapon.slots.primary) and not weapon.classes.spy
 	end,
 	function(stat, weapon)
-		stat.val = stat.val * (stat.val > 0 and 4 or 1.5)
+		stat.val = stat.val * (stat.val > 0 and 2 or 1)
 
 		stat.val = core.utils.round(stat.val, 5)
 		stat.weight = core.utils.round(stat.weight, 5)
@@ -520,7 +518,7 @@ core.stats.registerStat("ammo", {min = -50, max = 50},
 		return (weapon.flags.reserve or not weapon.slots.secondary) and not weapon.classes.medic
 	end,
 	function(stat, weapon)
-		stat.val = stat.val * (stat.val > 0 and 4 or 1.5)
+		stat.val = stat.val * (stat.val > 0 and 2 or 1)
 
 		stat.val = core.utils.round(stat.val, 5)
 		stat.weight = core.utils.round(stat.weight, 5)
@@ -535,28 +533,23 @@ core.stats.registerStat("ammo", {min = -50, max = 50},
 	end
 )
 
-core.stats.registerStat("ammo", {min = -50, max = 50},
+core.stats.registerStat("ammo", {-100, -75, 75, 100},
 	function(stat, weapon)
-		if stat.val > 0 then
+		if stat.weight > 0 then
 			return "+While holstered, "..stat.val.." reserve ammo per second for this weapon is regenerated"
 		else
 			return "-While holstered, "..(-stat.val).." reserve ammo per second for this weapon is depleted"
 		end
 	end,
 	function(weapon)
-		return weapon.flags.reserve
+		return weapon.flags.reserve and weapon.flags.reserve >= 20
 	end,
 	function(stat, weapon)
-		local res = weapon.flags.reserve
-		local change = core.utils.round((stat.val / 10 + 100) / 100 * res)
+		stat.val = core.utils.round((math.abs(stat.val) - 50) / 500 * weapon.flags.reserve)
 
-		if res - change == 0 then
-			change = change + 1
+		if stat.val == 0 then
+			stat.val = stat.val + 1
 		end
-
-		stat.val = core.utils.round((change / res - 1) * 100)
-
-		stat.weight = core.utils.round(stat.weight, 10)
 	end
 )
 
@@ -1445,7 +1438,7 @@ core.stats.registerStat("knockback", {min = -40, max = 40},
 		end
 	end,
 	function(weapon)
-		return weapon.flags.damage and not weapon.flags.instakill_goal
+		return weapon.flags.damage and not weapon.flags.instakill_goal and (weapon.flags.airblast or weapon.flags.splash)
 	end,
 	function(stat, weapon)
 		stat.val = core.utils.round(stat.val * (stat.val > 0 and 5 or 2), 5)
@@ -1553,10 +1546,10 @@ core.stats.registerStat("max_health", {min = -50, max = 50},
 
 core.stats.registerStat("max_health", {min = -80, max = 80},
 	function(stat, weapon)
-		if stat.val > 0 then
+		if stat.weight > 0 then
 			return "+Maximum health grows up to "..stat.val.."% while deployed"
 		else
-			return "-Maximum health drains down to "..(-stat.val).."% while deployed"
+			return "-Maximum health drains down to "..stat.val.."% while deployed"
 		end
 	end,
 	function(weapon)
@@ -1567,12 +1560,12 @@ core.stats.registerStat("max_health", {min = -80, max = 80},
 			stat.val = math.max(core.utils.round(stat.val / 2, 10), 10)
 			stat.weight = stat.val * 2
 		else
-			stat.val = -math.max(100 + core.utils.round(stat.val, 20), 20)
-			stat.weight = -(stat.val + 100)
+			stat.val = 100 - math.max(core.utils.round(-stat.val, 20), 20)
+			stat.weight = stat.val - 100
 
 			if weapon.name == "medigun" then
 				stat.weight = stat.weigh * 4
-			elseif weapon.slots.primary or (weapon.slots.melee and (weapon.classes.demo or weapon.classes.engineer or weapon.classes.spy)) then
+			elseif weapon.slots.primary or weapon.name == "stickybomb_launcher" or (weapon.slots.melee and (weapon.classes.demo or weapon.classes.engineer or weapon.classes.spy)) then
 				stat.weight = stat.weight * 2.25
 			end
 		end
@@ -1811,7 +1804,7 @@ core.stats.registerStat("movement", {min = 10, max = 40},
 	end
 )
 
-core.stats.registerStat("movement", {-80, 40},
+core.stats.registerStat("movement", {-30, 80},
 	function(stat, weapon)
 		if stat.val > 0 then
 			return "+On hit: Slows the target briefly"
@@ -1902,7 +1895,7 @@ core.stats.registerStat("reload", {-50, 50},
 
 core.stats.registerStat("reload", {-50, 50},
 	function(stat, weapon)
-		return (stat.val > 0 and "+" or "-").."+On miss: 1 ammo is instantly "..(stat.val > 0 and "reloaded into" or "unloaded from").." the clip"
+		return (stat.val > 0 and "+" or "-").."On miss: 1 ammo is instantly "..(stat.val > 0 and "reloaded into" or "unloaded from").." the clip"
 	end,
 	function(weapon)
 		return weapon.flags.clip and weapon.name ~= "stickybomb_launcher"
