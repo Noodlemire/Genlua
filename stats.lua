@@ -1043,7 +1043,7 @@ core.stats.registerStat("damage", 75, "+On hit: One target at a time is Marked F
 		return weapon.flags.damage and not weapon.flags.splash and not weapon.flags.bullets_per_shot and not weapon.instakill_goal
 	end,
 	function(stat, weapon)
-		if weapon.flags.recharge or (weapon.slots.melee and not (weapon.classes.soldier or weapon.classes.demo)) then
+		if weapon.flags.recharge or (weapon.slots.melee and not (weapon.classes.engineer or weapon.classes.demo)) then
 			stat.weight = stat.weight / 3
 		end
 
